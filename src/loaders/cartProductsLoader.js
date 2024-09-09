@@ -6,7 +6,8 @@ const cartProductsLoader = async () => {
 
     // if cart data is in database, you have to use async await
     const storedCart = getShoppingCart();
-
+    const storedCartIds = Object.keys(storedCart)
+    console.log({storedCartIds})
     const savedCart = [];
 
     for (const id in storedCart) {
