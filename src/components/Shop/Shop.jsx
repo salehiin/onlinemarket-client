@@ -8,8 +8,19 @@ import { Link, useLoaderData } from 'react-router-dom';
 const Shop = () => {
     const [products, setProducts] = useState([]);
     const [cart, setCart] = useState([])
+    const [currentPage, setCurrentPage] = useState(0);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     const {totalProducts} = useLoaderData();
-    console.log(totalProducts);
+    // const itemsPerPage = 10;
+    const numberOfPages = Math.ceil(totalProducts / itemsPerPage);
+
+    // const pages = []
+    // for(let i = 0; i < numberOfPages; i++){
+    //     pages.push(i)
+    // }
+    // console.log(pages);
+    // OR
+    const pages = [...Array(numberOfPages).keys()];
 
     useEffect(() => {
         fetch('http://localhost:5000/products')
@@ -63,6 +74,27 @@ const Shop = () => {
         deleteShoppingCart();
     }
 
+    const handleItemsPerPage = e => {
+        // console.log(e.target.value);
+
+        const val = parseInt(e.target.value);
+        console.log(val);
+        setItemsPerPage(val);
+        setCurrentPage(0);
+
+    }
+
+    const handlePrevPage = () =>{
+        if(currentPage > 0){
+            setCurrentPage(currentPage - 1);
+        }
+    }
+    const handleNextPage = () =>{
+        if(currentPage < pages.length - 1){
+            setCurrentPage(currentPage + 1);
+        }
+    }
+
     return (
         <div className='shop-container'>
             <div className="products-container">
@@ -83,6 +115,24 @@ const Shop = () => {
                         <button className='btn-proceed'>Review Order</button>
                     </Link>
                 </Cart>
+            </div>
+            <div className='pagination'>
+                <p>Current page: {currentPage}</p>
+                <button onClick={handlePrevPage}>Prev</button>
+                {
+                    pages.map(page =><button
+                        className={currentPage === page && 'selected'}
+                        onClick={()=> setCurrentPage(page)} 
+                        key={page}
+                    >{page}</button>)
+                }
+                <button onClick={handleNextPage}>Next</button>
+                <select value={itemsPerPage} onChange={handleItemsPerPage} name="" id="">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                </select>
             </div>
         </div>
     );
